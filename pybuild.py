@@ -36,14 +36,6 @@ RT_MANIFEST = 24
 
 class Py2exe(py2exe.build_exe.py2exe):
     """A py2exe which archive *.py files to zip"""
-    def _find_pyo_path(self, pyo_path):
-        """_weakrefset.pyo ->  D:\Python27\Lib\_weakrefset.py"""
-        assert pyo_path.endswith(('.pyo', 'pyc'))
-        py_base_path = pyo_path[:-1]
-        for path in sys.path:
-            py_path = os.path.join(path, py_base_path)
-            if os.path.isfile(py_path):
-                return py_path
     def make_lib_archive(self, zip_filename, base_dir, files,
                          verbose=0, dry_run=0):
         from distutils.dir_util import mkpath
@@ -63,11 +55,9 @@ class Py2exe(py2exe.build_exe.py2exe):
                 z = zipfile.ZipFile(zip_filename, "w",
                                     compression=compression)
                 for f in files:
-                    if f.endswith(('.pyo', '.pyc')):
-                        py_path = self._find_pyo_path(f)
-                        assert py_path, 'cannot locate in %r in %s' % (f, sys.path)
-                        z.write(py_path, f[:-1])
-                    else:
+                    try:
+                        z.write((os.path.join(x, f[:-1]) for x in sys.path if os.path.isfile(os.path.join(x, f[:-1]))).next(), f[:-1])
+                    except:
                         z.write(os.path.join(base_dir, f), f)
                 z.close()
 
