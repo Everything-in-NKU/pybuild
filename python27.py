@@ -64,13 +64,9 @@ arg ...: arguments passed to program in sys.argv[1:]
 elif opts.get('-c') is not None:
     exec opts.get('-c') in main.__dict__
 elif opts.get('-m') is not None:
-    mod_name = opts.get('-m')
-    mod = __import__(mod_name)
     get_loader = getattr(__import__('imp'), 'get_loader', None) or getattr(__import__('pkgutil'), 'get_loader')
-    loader = get_loader(mod)
-    codeobj = loader.get_code(mod_name)
-    __name__ = '__main__'
-    exec codeobj in globals()
+    codeobj = get_loader(opts['-m']).get_code(opts['-m'])
+    exec codeobj in {'__name__':'__main__', '__file__':codeobj.co_filename}
 elif sys.argv[0] and os.path.exists(sys.argv[0]):
     if sys.argv[0].endswith('.zip'):
         importer = zipimport.zipimporter(sys.argv[0])
