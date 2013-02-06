@@ -40,7 +40,7 @@ def parse_options(args, spec):
     newargs.extend(args[i:])
     return opts, newargs
 
-opts, args = parse_options(sys.argv[1:], '-u -h -B -x -c=')
+opts, args = parse_options(sys.argv[1:], '-u -h -B -x -c= -m=')
 opts = dict(opts)
 sys.argv = args or ['']
 
@@ -63,6 +63,14 @@ arg ...: arguments passed to program in sys.argv[1:]
     """.strip()
 elif opts.get('-c') is not None:
     exec opts.get('-c') in main.__dict__
+elif opts.get('-m') is not None:
+    mod_name = opts.get('-m')
+    mod = __import__(mod_name)
+    get_loader = getattr(__import__('imp'), 'get_loader', None) or getattr(__import__('pkgutil'), 'get_loader')
+    loader = get_loader(mod)
+    codeobj = loader.get_code(mod_name)
+    __name__ = '__main__'
+    exec codeobj in globals()
 elif sys.argv[0] and os.path.exists(sys.argv[0]):
     if sys.argv[0].endswith('.zip'):
         importer = zipimport.zipimporter(sys.argv[0])
