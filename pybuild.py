@@ -115,9 +115,10 @@ def optparse_options_to_dist_options(filename, options):
 
     mode = 'windows' if options.windowed else 'console'
     mode_options = {'script'          : filename,
-                    'version'         : options.version or '1.0',
+                    'description'     : options.version or 'https://github.com/goagent/pybuild',
+                    'version'         : options.version or '1.0.0.0',
                     'name'            : options.name or basename,
-                    'company_name'    : options.company or None,
+                    'company_name'    : options.company or 'goagent.org',
                     'icon_resources'  : [(1, options.icon)] if options.icon else [],
                     'other_resources' : [(RT_MANIFEST, 1, manifest_template % dict(prog=basename))] if mode == 'windows' else [],
                     }
@@ -160,6 +161,7 @@ def main():
     parser.add_option("-a", "--ascii",    dest="ascii",    action="store_true", default=False, help="do not include encodings.")
     parser.add_option("-b", "--bundle",   dest="bundle",   type="int",    metavar="LEVEL",  help="produce a bundle_files deployment.")
     parser.add_option("-v", "--version",  dest="version",  type="string", metavar="number", help="add version number to the executable.")
+    parser.add_option("-d", "--description",  dest="description",  type="string", help="add description to the executable.")
     parser.add_option("-n", "--name",     dest="name",     type="string", help="add name string to the executable.")
     parser.add_option("-c", "--company",  dest="company",  type="string", help="add company string to the executable.")
     parser.add_option("-i", "--icon"   ,  dest="icon",     type="string", metavar="file.ico", help="add file.ico to the executable's resources.")
