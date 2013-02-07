@@ -4,7 +4,6 @@
 import sys
 import os
 #sys.path.append(os.path.dirname(getattr(sys,'executable',sys.argv[0])) or '.')
-import zipimport
 try:
     import zipextimporter
     zipextimporter.install()
@@ -76,6 +75,7 @@ elif opts.get('-m') is not None:
     exec codeobj in {'__name__':'__main__', '__file__':codeobj.co_filename}
 elif sys.argv[0] and os.path.exists(sys.argv[0]):
     if sys.argv[0].endswith('.zip'):
+        import zipimport
         importer = zipimport.zipimporter(sys.argv[0])
         sys.path.insert(0, sys.argv[0])
         main.__dict__['__file__'] = os.path.join(os.path.abspath(sys.argv[0]), '__main__.py')
