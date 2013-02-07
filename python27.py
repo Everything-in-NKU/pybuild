@@ -10,7 +10,6 @@ try:
     zipextimporter.install()
 except:
     pass
-main = __import__('__main__')
 
 def parse_options(args, spec):
     needarg = dict()
@@ -40,12 +39,17 @@ def parse_options(args, spec):
     newargs.extend(args[i:])
     return opts, newargs
 
-opts, args = parse_options(sys.argv[1:], '-u -h -B -x -c= -m=')
+opts, args = parse_options(sys.argv[1:], '-u -h -B -V -x -c= -m=')
 opts = dict(opts)
 sys.argv = args or ['']
 
-if '-B' in opts:
+main = __import__('__main__')
+
+if '-B' in opts or os.getenv('PYTHONDONTWRITEBYTECODE'):
     sys.dont_write_bytecode = True
+if '-u' in opts or os.getenv('PYTHONUNBUFFERED'):
+    sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
+    sys.stderr = os.fdopen(sys.stderr.fileno(), 'w', 0)
 
 if '-h' in opts:
     print """
@@ -56,11 +60,14 @@ Options and arguments (and corresponding environment variables):
 -h     : print this help message and exit
 -u     : unbuffered binary stdout and stderr; also PYTHONUNBUFFERED=x
          see man page for details on internal buffering relating to '-u'
+-V     : print the Python version number and exit (also --version)
 -x     : skip first line of source, allowing use of non-Unix forms of #!cmd
 file   : program read from script file
 -      : program read from stdin (default; interactive mode if a tty)
 arg ...: arguments passed to program in sys.argv[1:]
     """.strip()
+elif '-V' in opts:
+    sys.stdout.write('python %s\n' % sys.version.split()[0])
 elif opts.get('-c') is not None:
     exec opts.get('-c') in main.__dict__
 elif opts.get('-m') is not None:
