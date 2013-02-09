@@ -3,7 +3,7 @@
 
 import sys
 import os
-#sys.path.append(os.path.dirname(getattr(sys,'executable',sys.argv[0])) or '.')
+sys.path.append(os.path.dirname(getattr(sys,'executable',sys.argv[0])) or '.')
 try:
     import zipextimporter
     zipextimporter.install()
