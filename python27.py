@@ -73,7 +73,7 @@ elif options.get('-m') is not None:
     exec codeobj in main.__dict__
 elif options.get('-c') is not None:
     exec options.get('-c') in main.__dict__
-elif sys.argv[0] and os.path.exists(sys.argv[0]):
+elif sys.argv[0]:
     if sys.argv[0].endswith('.zip'):
         import zipimport
         importer = zipimport.zipimporter(sys.argv[0])
@@ -81,11 +81,18 @@ elif sys.argv[0] and os.path.exists(sys.argv[0]):
         main.__dict__['__file__'] = os.path.join(os.path.abspath(sys.argv[0]), '__main__.py')
         exec importer.get_code('__main__') in main.__dict__
     else:
-        with open(sys.argv[0], 'r') as fp:
+        codeobj = None
+        with open(sys.argv[0], 'rb') as fp:
             if '-x' in options:
                 fp.readline()
+            content = fp.read()
             main.__dict__['__file__'] = os.path.abspath(sys.argv[0])
-            exec fp in main.__dict__
+            if content.startswith('\x03\xf3\r\n'):
+                codeobj = __import__('marshal').loads(content[8:])
+            else:
+                codeobj = compile(content, filename=sys.argv[0], mode='exec')
+        if codeobj:
+            exec codeobj in main.__dict__
 else:
     import code
     cprt = 'Type "help", "copyright", "credits" or "license" for more information.'

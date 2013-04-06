@@ -119,7 +119,7 @@ def optparse_options_to_dist_options(filename, options):
                     'version'         : options.version or '1.0.0.0',
                     'name'            : options.name or basename,
                     'company_name'    : options.company or 'goagent.org',
-                    'copyright'       : options.copyright or 'GPL 2',
+                    'copyright'       : options.copyright or 'GPL License',
                     'icon_resources'  : [(1, options.icon)] if options.icon else [],
                     'other_resources' : [(RT_MANIFEST, 1, manifest_template % dict(prog=basename))] if mode == 'windows' else [],
                     }
