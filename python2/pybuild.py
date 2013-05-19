@@ -81,34 +81,6 @@ class Py2exe(py2exe.build_exe.py2exe):
                          )
             return '.'
 
-class Py2exeUPX(py2exe.build_exe.py2exe):
-    '''from http://www.py2exe.org/index.cgi/BetterCompression'''
-    def initialize_options(self):
-        # Add a new "upx" option for compression with upx
-        py2exe.build_exe.py2exe.initialize_options(self)
-        self.upx = 1
-    def copy_file(self, *args, **kwargs):
-        # Override to UPX copied binaries.
-        (fname, copied) = result = py2exe.build_exe.py2exe.copy_file(self, *args, **kwargs)
-        basename = os.path.basename(fname)
-        if (copied and self.upx and
-            (basename[:6]+basename[-4:]).lower() != 'python.dll' and
-            fname[-4:].lower() in ('.pyd', '.dll')):
-            os.system('upx --best "%s"' % os.path.normpath(fname))
-        return result
-    def patch_python_dll_winver(self, dll_name, new_winver=None):
-        # Override this to first check if the file is upx'd and skip if so
-        if not self.dry_run:
-            if not os.system('upx -qt "%s" >nul' % dll_name):
-                if self.verbose:
-                    print "Skipping setting sys.winver for '%s' (UPX'd)" % \
-                          dll_name
-            else:
-                py2exe.build_exe.py2exe.patch_python_dll_winver(self, dll_name, new_winver)
-                # We UPX this one file here rather than in copy_file so
-                # the version adjustment can be successful
-                if self.upx:
-                    os.system('upx --best "%s"' % os.path.normpath(dll_name))
 
 def optparse_options_to_dist_options(filename, options):
     basename = os.path.splitext(os.path.basename(filename))[0]
@@ -134,12 +106,11 @@ def optparse_options_to_dist_options(filename, options):
                      }
 
     zipfile = options.zipfile
-    cmdclass = Py2exeUPX if options.upx else Py2exe
 
     return { mode      :  [mode_options],
             'zipfile'  :  zipfile,
             'options'  :  {'py2exe' : py2exe_options},
-            'cmdclass' :  {'py2exe' : cmdclass},
+            'cmdclass' :  {'py2exe' : Py2exe},
             }
 
 def finalize(windows=None, console=None, service=None, com_server=None, ctypes_com_server=None, zipfile=None, options=None, cmdclass=None):
@@ -168,7 +139,6 @@ def main():
     parser.add_option("-c", "--company",  dest="company",  type="string", help="add company string to the executable.")
     parser.add_option("-i", "--icon"   ,  dest="icon",     type="string", metavar="file.ico", help="add file.ico to the executable's resources.")
     parser.add_option("-z", "--zipfile",  dest="zipfile",  type="string", metavar="file.zip", help="add file.zip to the extra resources.")
-    parser.add_option("-X", "--upx"   ,   dest="upx",      action="store_true", default=False, help="if you have UPX installed (detected by Configure), this will use it to compress your executable.")
     parser.add_option("-x", "--excludes", dest="excludes", type="string", default='', help="py2exe excludes packages.")
 
     options, args = parser.parse_args()
