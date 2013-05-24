@@ -6,6 +6,7 @@ import os
 import codecs
 #sys.path.append(os.path.dirname(getattr(sys,'executable',sys.argv[0])) or '.')
 import zipimport
+import _frozen_importlib
 try:
     import zipextimporter
     zipextimporter.install()
@@ -75,12 +76,14 @@ elif sys.argv[0] and os.path.exists(sys.argv[0]):
         main.__dict__['__file__'] = os.path.join(os.path.abspath(sys.argv[0]), '__main__.py')
         exec(importer.get_code('__main__'), main.__dict__)
     else:
-        with codecs.open(sys.argv[0], 'r', 'UTF-8') as fp:
-            lines = fp.readlines()
+        main.__dict__['__file__'] = os.path.abspath(sys.argv[0])
+        codeobj = None
+        with open(sys.argv[0], 'rb') as fp:
             if '-x' in opts:
-                del lines[0]
-            main.__dict__['__file__'] = os.path.abspath(sys.argv[0])
-            exec(''.join(lines), main.__dict__)
+                fp.readline()
+            codeobj = compile(fp.read(), sys.argv[0], 'exec')
+        if codeobj:
+            exec(codeobj, main.__dict__)
 else:
     import code
     cprt = 'Type "help", "copyright", "credits" or "license" for more information.'
