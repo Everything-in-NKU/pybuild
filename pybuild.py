@@ -9,14 +9,15 @@ import zipfile
 
 manifest_template = '''
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1"
+manifestVersion="1.0">
 <assemblyIdentity
-    version="5.0.0.0"
+    version="0.64.1.0"
     processorArchitecture="x86"
-    name="%(prog)s"
+    name="Controls"
     type="win32"
 />
-<description>%(prog)s Program</description>
+<description>Test Program</description>
 <dependency>
     <dependentAssembly>
         <assemblyIdentity
@@ -25,6 +26,18 @@ manifest_template = '''
             version="6.0.0.0"
             processorArchitecture="X86"
             publicKeyToken="6595b64144ccf1df"
+            language="*"
+        />
+    </dependentAssembly>
+</dependency>
+<dependency>
+    <dependentAssembly>
+        <assemblyIdentity
+            type="win32"
+            name="Microsoft.VC90.CRT"
+            version="9.0.30729.4918"
+            processorArchitecture="X86"
+            publicKeyToken="1fc8b3b9a1e18e3b"
             language="*"
         />
     </dependentAssembly>
