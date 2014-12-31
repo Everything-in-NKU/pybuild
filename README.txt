@@ -11,6 +11,3 @@ A: extract python27.zip, delete some unused packages(email/unitest/unicodedata),
 
 Q: How to disassemble python27.exe bytecode ?
 A: python -c "import sys,marshal,dis,py2exe.py2exe_util;dis.disassemble(marshal.loads(py2exe.py2exe_util.load_resource(sys.argv[1].decode(sys.getfilesystemencoding()), u'PYTHONSCRIPT', 1)[16:].partition('\x00')[2])[-1])" python27.exe
-
-Q: What's more?
-A: please mailto goagent-dev@googlegroups.com
