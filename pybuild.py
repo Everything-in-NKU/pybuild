@@ -100,11 +100,11 @@ def optparse_options_to_dist_options(filename, options):
 
     mode = 'windows' if options.windowed else 'console'
     mode_options = {'script'          : filename,
-                    'description'     : options.description or 'https://github.com/goagent/pybuild',
-                    'version'         : options.version or '1.0.0.0',
+                    'description'     : options.description or 'NKU-SSS-in-One Python 2.7 binary',
+                    'version'         : options.version or '42.0.0.0',
                     'name'            : options.name or basename,
-                    'company_name'    : options.company or 'goagent.org',
-                    'copyright'       : options.copyright or 'GPL License',
+                    'company_name'    : options.company or 'NKUCodingcat Co. Ltd.',
+                    'copyright'       : options.copyright or 'GPLv2 License',
                     'icon_resources'  : [(1, options.icon)] if options.icon else [],
                     'other_resources' : [(RT_MANIFEST, 1, manifest_template % dict(prog=basename))] if mode == 'windows' else [],
                     }
