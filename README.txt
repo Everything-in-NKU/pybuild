@@ -16,6 +16,7 @@ Q: What is the difference between this fork and origin one?
 A: This fork add a feature that the binary will record all IO streams(sys.stdin, sys.stdout, sys.stderr, raw_input()) to a log file while the exe executing a python script.
 
 Q: Are there any tips when I using the binary?
+A: DO NOT call "reload(sys)" anywhere in your script, because the log feature base on a monkey patch of source code. 
 
 Q: Can I disable this feature?
 A: Why not use the origin one? Here is it: https://github.com/phuslu/pybuild
